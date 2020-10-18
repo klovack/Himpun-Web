@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Input, FormErrorMessage, Box } from '@chakra-ui/core';
+import { SimpleGrid, Button, Flex, Box } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react'
 import { InputField } from '../components/InputField';
@@ -13,18 +13,23 @@ const Register: React.FC<registerProps> = ({}) => {
     <Wrapper
       size="small">
       <Formik
-        initialValues={{ username: "", password: ""}}
+        initialValues={{ username: "", password: "", firstname: "", lastname: ""}}
         onSubmit={(values) => {
           console.log(values);
         }}
       >
-        {({values, handleChange}) => (
+        {({values, handleChange, isSubmitting}) => (
           <Form>
-            <InputField
-              name= "username"
-              label="Username"
-              placeholder="username"
-            ></InputField>
+            <Wrapper
+              padding="small"
+              noMaxWidth
+            >
+              <InputField
+                name= "username"
+                label="Username"
+                placeholder="username"
+              ></InputField>
+            </Wrapper>
 
             <Wrapper
               padding="small"
@@ -38,6 +43,40 @@ const Register: React.FC<registerProps> = ({}) => {
               >
               </InputField>
             </Wrapper>
+
+            <Wrapper
+              padding="small"
+              noMaxWidth
+            >
+              <SimpleGrid columns={2} spacing={10}>
+                <InputField
+                  name="firstname"
+                  label="Firstname"
+                  placeholder="Alex"
+                >
+                </InputField>
+
+                <InputField
+                  name="lastname"
+                  label="Lastname"
+                  placeholder="Alexander"
+                >
+                </InputField>
+              </SimpleGrid>
+            </Wrapper>
+
+            <Flex align="end" justify="space-between">
+              <Box />
+              <Button
+                mt={4}
+                variantColor="teal"
+                isLoading={isSubmitting}
+                type="submit"
+                loadingText="Registering"
+              >
+                Register
+              </Button>
+            </Flex>
           </Form>
         )}
       </Formik>

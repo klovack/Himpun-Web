@@ -22,6 +22,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         {...field}
         {...props}
         id={field.name}
+        variant="flushed"
         placeholder={props.placeholder} />
       { error ? <FormErrorMessage>{error}</FormErrorMessage> : null }
     </FormControl>
