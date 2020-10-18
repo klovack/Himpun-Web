@@ -1,7 +1,7 @@
 import { SimpleGrid, Button, Flex, Box } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react'
-import { OperationResult, useMutation } from 'urql';
+import { useMutation } from 'urql';
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 
