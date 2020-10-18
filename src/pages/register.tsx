@@ -1,49 +1,23 @@
 import { SimpleGrid, Button, Flex, Box } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react'
-import { useMutation } from 'urql';
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
+import { useRegisterMutation } from '../generated/graphql';
 
-interface registerProps {
-  
-}
-
-const MUTATION_REGISTER = `
-mutation Register($username: String!, $password: String!, $firstname: String!, $lastname:String!){
-  register(
-    credentials: {
-      username: $username
-      password: $password
-    }
-    options: {
-      firstname: $firstname
-      lastname: $lastname
-    }
-  ) {
-    errors {
-      field
-      message
-    }
-    user {
-      id
-      username
-      firstname
-      lastname
-    }
-  }
-}
-`;
+interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
-  const [, register] = useMutation(MUTATION_REGISTER);
+  const [, register] = useRegisterMutation();
   
   return (
     <Wrapper
       size="small">
       <Formik
         initialValues={{ username: "", password: "", firstname: "", lastname: ""}}
-        onSubmit={(values) => register(values) }
+        onSubmit={async (values) => {
+          const response = await register(values); 
+        }}
       >
         {({ isSubmitting }) => (
           <Form>
