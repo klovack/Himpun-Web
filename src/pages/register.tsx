@@ -1,13 +1,17 @@
 import { SimpleGrid, Button, Flex, Box } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react'
+import { useRouter } from 'next/router';
+
 import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import { useRegisterMutation } from '../generated/graphql';
+import { mapError } from '../util/mapError';
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
+  const router = useRouter();
   const [, register] = useRegisterMutation();
   
   return (
@@ -15,8 +19,17 @@ const Register: React.FC<registerProps> = ({}) => {
       size="small">
       <Formik
         initialValues={{ username: "", password: "", firstname: "", lastname: ""}}
-        onSubmit={async (values) => {
-          const response = await register(values); 
+        onSubmit={async (values, {setErrors}) => {
+          const response = await register(values);
+
+          // Check the credentials validity
+          // and if it isn't valid throw the error through the chakra error.
+          // otherwise move user to the homepage
+          if (response.data?.register.errors) {
+            setErrors(mapError(response.data.register.errors));
+          } else if (response.data?.register.user) {
+            router.push("/");
+          }
         }}
       >
         {({ isSubmitting }) => (
