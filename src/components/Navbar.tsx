@@ -2,7 +2,7 @@ import { Box, Flex, Image, Link, Menu, MenuButton, MenuItem, MenuList } from '@c
 import React from 'react'
 import NextLink from 'next/link';
 
-import {useMeQuery} from '../generated/graphql'
+import {useMeQuery, useLogoutMutation} from '../generated/graphql'
 import { Wrapper } from './Wrapper';
 
 interface NavbarProps {
@@ -10,6 +10,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({}) => {
+  const [, logout] = useLogoutMutation();
   const [ {data, fetching} ] = useMeQuery();
 
   // Determine the states of the login
@@ -37,7 +38,11 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
         </MenuButton>
 
         <MenuList>
-          <MenuItem>Logout</MenuItem>
+          <MenuItem onClick={
+            () => {
+              logout();
+            }
+          }>Logout</MenuItem>
         </MenuList>
       </Menu>
     )
