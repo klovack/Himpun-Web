@@ -22,7 +22,6 @@ const Login: React.FC<loginProps> = ({}) => {
         initialValues={{ username: "", password: "", }}
         validationSchema={LoginSchema}
         onSubmit={async (values, {setErrors}) => {
-          console.log(values);
           const response = await login({credentials: values });
 
           // Check the credentials validity
