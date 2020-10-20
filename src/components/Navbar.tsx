@@ -10,15 +10,14 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({}) => {
-  const [, logout] = useLogoutMutation();
+  const [{fetching: logoutFetching}, logout] = useLogoutMutation();
   const [ {data, fetching} ] = useMeQuery();
 
   // Determine the states of the login
   let body = null;
   // Waiting response from the server
   if (fetching) {
-
-    
+    // Maybe disabling the button
   }else if (!data?.profile) { // User not logged in
     body = (
       <Box>
@@ -42,7 +41,9 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
             () => {
               logout();
             }
-          }>Logout</MenuItem>
+          }
+          isDisabled={logoutFetching}
+          >Logout</MenuItem>
         </MenuList>
       </Menu>
     )

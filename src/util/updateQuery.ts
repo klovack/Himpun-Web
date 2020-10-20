@@ -43,3 +43,16 @@ export const registerQueryCacheExchange = (_result: any, __:any , cache: any, _:
     }
   );
 }
+
+export const logoutQueryCacheExchange = (_result: any, __:any , cache: any, _: any) => {
+  typedUpdateQuery<LoginMutation, MeQuery>(
+    cache, 
+    {query: MeDocument},
+    _result,
+    () => {
+      return {
+        profile: null,
+      }
+    }
+  );
+}

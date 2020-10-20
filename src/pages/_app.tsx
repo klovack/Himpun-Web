@@ -4,7 +4,7 @@ import { cacheExchange } from '@urql/exchange-graphcache';
 import { Navbar } from '../components/Navbar';
 
 import theme from '../theme'
-import { loginQueryCacheExchange, registerQueryCacheExchange } from '../util/updateQuery';
+import { loginQueryCacheExchange, logoutQueryCacheExchange, registerQueryCacheExchange } from '../util/updateQuery';
 
 const client = createClient({ 
   url: 'http://localhost:4000/graphql',
@@ -14,6 +14,7 @@ const client = createClient({
   exchanges: [dedupExchange, cacheExchange({
     updates: {
       Mutation: {
+        logout: logoutQueryCacheExchange,
         login: loginQueryCacheExchange,
         register: registerQueryCacheExchange,
       }
