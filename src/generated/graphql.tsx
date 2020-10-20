@@ -142,6 +142,28 @@ export type RegisterMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { profile?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'firstname'>
+  )> }
+);
+
+export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProfileQuery = (
+  { __typename?: 'Query' }
+  & { profile?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'firstname' | 'lastname'>
+  )> }
+);
+
 
 export const LoginDocument = gql`
     mutation Login($credentials: UsernamePasswordInput!) {
@@ -181,4 +203,31 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const MeDocument = gql`
+    query Me {
+  profile {
+    id
+    username
+    firstname
+  }
+}
+    `;
+
+export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};
+export const ProfileDocument = gql`
+    query Profile {
+  profile {
+    id
+    username
+    firstname
+    lastname
+  }
+}
+    `;
+
+export function useProfileQuery(options: Omit<Urql.UseQueryArgs<ProfileQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<ProfileQuery>({ query: ProfileDocument, ...options });
 };

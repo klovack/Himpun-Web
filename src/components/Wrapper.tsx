@@ -1,7 +1,7 @@
-import { Box } from '@chakra-ui/core';
+import { Box, BoxProps } from '@chakra-ui/core';
 import React from 'react'
 
-interface wrapperProps {
+type wrapperProps = BoxProps & {
   size?: "extra-small" | "small" | "regular" | "large";
   padding?: "none" | "small" | "regular" | "large";
   noMaxWidth?: boolean;

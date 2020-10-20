@@ -1,13 +1,48 @@
-import { Box, Flex, Image, Link } from '@chakra-ui/core';
+import { Box, Button, Flex, Image, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
 import React from 'react'
-import { Wrapper } from './Wrapper';
 import NextLink from 'next/link';
+
+import {useMeQuery} from '../generated/graphql'
+import { Wrapper } from './Wrapper';
 
 interface NavbarProps {
   
 }
 
 export const Navbar: React.FC<NavbarProps> = ({}) => {
+  const [ {data, fetching} ] = useMeQuery();
+
+  // Determine the states of the login
+  let body = null;
+  // Waiting response from the server
+  if (fetching) {
+
+    
+  }else if (!data?.profile) { // User not logged in
+    body = (
+      <Box>
+        <NextLink href="/login">
+          <Link mr={5}>Login</Link>
+        </NextLink>
+        <NextLink href="/register">
+          <Link>Register</Link>
+        </NextLink>
+      </Box>
+    );
+  } else { // User logged in
+    body = (
+      <Menu>
+        <MenuButton as={Link}>
+          {data.profile.firstname}
+        </MenuButton>
+
+        <MenuList>
+          <MenuItem>Logout</MenuItem>
+        </MenuList>
+      </Menu>
+    )
+  }
+
   return (
     <Box p={4}>
       <Wrapper
@@ -28,14 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
             </Link>
           </NextLink>
 
-          <Box>
-            <NextLink href="/login">
-              <Link mr={5}>Login</Link>
-            </NextLink>
-            <NextLink href="/register">
-              <Link>Register</Link>
-            </NextLink>
-          </Box>
+          {body}
         </Flex>
       </Wrapper>
     </Box>

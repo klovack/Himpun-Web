@@ -1,0 +1,16 @@
+query Me {
+  profile {
+    id
+    username
+    firstname
+  }
+}
+
+query Profile {
+  profile {
+    id
+    username
+    firstname
+    lastname
+  }
+}
