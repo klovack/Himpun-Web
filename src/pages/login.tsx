@@ -7,6 +7,7 @@ import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import { useLoginMutation } from '../generated/graphql';
 import { mapError } from '../util/mapError';
+import { LoginSchema } from '../util/validate';
 
 interface loginProps {}
 
@@ -19,7 +20,9 @@ const Login: React.FC<loginProps> = ({}) => {
       size="small">
       <Formik
         initialValues={{ username: "", password: "", }}
+        validationSchema={LoginSchema}
         onSubmit={async (values, {setErrors}) => {
+          console.log(values);
           const response = await login({credentials: values });
 
           // Check the credentials validity

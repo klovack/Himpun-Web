@@ -1,6 +1,5 @@
 import { FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/core';
 import { useField } from 'formik';
-import mitt from 'next/dist/next-server/lib/mitt';
 import React, { InputHTMLAttributes } from 'react'
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -10,10 +9,10 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 
 export const InputField: React.FC<InputFieldProps> = ({
   label,
-  size: _, 
+  size: _,
   ...props
 }) => {
-  const [field, {error}] = useField(props);
+  const [field, {error, touched}] = useField(props);
 
   return (
     <FormControl isInvalid={!!error}>
@@ -24,7 +23,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         id={field.name}
         variant="flushed"
         placeholder={props.placeholder} />
-      { error ? <FormErrorMessage>{error}</FormErrorMessage> : null }
+      { error && touched ? <FormErrorMessage>{error}</FormErrorMessage> : null }
     </FormControl>
   );
 }

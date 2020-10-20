@@ -7,6 +7,7 @@ import { InputField } from '../components/InputField';
 import { Wrapper } from '../components/Wrapper';
 import { useRegisterMutation } from '../generated/graphql';
 import { mapError } from '../util/mapError';
+import { RegisterSchema } from '../util/validate';
 
 interface registerProps {}
 
@@ -19,6 +20,7 @@ const Register: React.FC<registerProps> = ({}) => {
       size="small">
       <Formik
         initialValues={{ username: "", password: "", firstname: "", lastname: ""}}
+        validationSchema={RegisterSchema}
         onSubmit={async (values, {setErrors}) => {
           const response = await register(values);
 
