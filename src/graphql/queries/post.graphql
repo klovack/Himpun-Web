@@ -1,0 +1,11 @@
+query Posts {
+  posts {
+    ...BasicPost
+  }
+}
+
+query Post($id: Int!) {
+  post(id: $id) {
+    ...BasicPost
+  }
+}

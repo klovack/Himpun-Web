@@ -1,0 +1,6 @@
+fragment BasicPost on Post {
+  id
+  createdAt
+  updatedAt
+  title
+}

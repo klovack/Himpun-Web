@@ -102,6 +102,11 @@ export type UsernamePasswordInput = {
   password: Scalars['String'];
 };
 
+export type BasicPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title'>
+);
+
 export type BasicUserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'username'>
@@ -164,6 +169,30 @@ export type RegisterMutation = (
   ) }
 );
 
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = (
+  { __typename?: 'Query' }
+  & { posts: Array<(
+    { __typename?: 'Post' }
+    & BasicPostFragment
+  )> }
+);
+
+export type PostQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type PostQuery = (
+  { __typename?: 'Query' }
+  & { post?: Maybe<(
+    { __typename?: 'Post' }
+    & BasicPostFragment
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -186,6 +215,14 @@ export type ProfileQuery = (
   )> }
 );
 
+export const BasicPostFragmentDoc = gql`
+    fragment BasicPost on Post {
+  id
+  createdAt
+  updatedAt
+  title
+}
+    `;
 export const BasicUserFragmentDoc = gql`
     fragment BasicUser on User {
   id
@@ -249,6 +286,28 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    ...BasicPost
+  }
+}
+    ${BasicPostFragmentDoc}`;
+
+export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
+};
+export const PostDocument = gql`
+    query Post($id: Int!) {
+  post(id: $id) {
+    ...BasicPost
+  }
+}
+    ${BasicPostFragmentDoc}`;
+
+export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {
