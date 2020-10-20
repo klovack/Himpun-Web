@@ -1,5 +1,6 @@
 import { ThemeProvider, CSSReset, ColorModeProvider } from '@chakra-ui/core'
 import { createClient, Provider } from 'urql'
+import { Navbar } from '../components/Navbar';
 
 import theme from '../theme'
 
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <ColorModeProvider>
           <CSSReset />
+          <Navbar></Navbar>
           <Component {...pageProps} />
         </ColorModeProvider>
       </ThemeProvider>
