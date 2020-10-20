@@ -101,6 +101,21 @@ export type UsernamePasswordInput = {
   password: Scalars['String'];
 };
 
+export type BasicUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username'>
+);
+
+export type CommonUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username' | 'firstname'>
+);
+
+export type CompleteUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username' | 'firstname' | 'lastname'>
+);
+
 export type LoginMutationVariables = Exact<{
   credentials: UsernamePasswordInput;
 }>;
@@ -115,16 +130,14 @@ export type LoginMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'firstname' | 'lastname'>
+      & CompleteUserFragment
     )> }
   ) }
 );
 
 export type RegisterMutationVariables = Exact<{
-  username: Scalars['String'];
-  password: Scalars['String'];
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
+  credentials: UsernamePasswordInput;
+  options?: Maybe<NameInput>;
 }>;
 
 
@@ -137,7 +150,7 @@ export type RegisterMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'firstname' | 'lastname'>
+      & CompleteUserFragment
     )> }
   ) }
 );
@@ -149,7 +162,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { profile?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'firstname'>
+    & CommonUserFragment
   )> }
 );
 
@@ -160,11 +173,31 @@ export type ProfileQuery = (
   { __typename?: 'Query' }
   & { profile?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'firstname' | 'lastname'>
+    & CompleteUserFragment
   )> }
 );
 
-
+export const BasicUserFragmentDoc = gql`
+    fragment BasicUser on User {
+  id
+  username
+}
+    `;
+export const CommonUserFragmentDoc = gql`
+    fragment CommonUser on User {
+  id
+  username
+  firstname
+}
+    `;
+export const CompleteUserFragmentDoc = gql`
+    fragment CompleteUser on User {
+  id
+  username
+  firstname
+  lastname
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($credentials: UsernamePasswordInput!) {
   login(credentials: $credentials) {
@@ -173,33 +206,28 @@ export const LoginDocument = gql`
       message
     }
     user {
-      id
-      firstname
-      lastname
+      ...CompleteUser
     }
   }
 }
-    `;
+    ${CompleteUserFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($username: String!, $password: String!, $firstname: String!, $lastname: String!) {
-  register(credentials: {username: $username, password: $password}, options: {firstname: $firstname, lastname: $lastname}) {
+    mutation Register($credentials: UsernamePasswordInput!, $options: NameInput) {
+  register(credentials: $credentials, options: $options) {
     errors {
       field
       message
     }
     user {
-      id
-      username
-      firstname
-      lastname
+      ...CompleteUser
     }
   }
 }
-    `;
+    ${CompleteUserFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
@@ -207,12 +235,10 @@ export function useRegisterMutation() {
 export const MeDocument = gql`
     query Me {
   profile {
-    id
-    username
-    firstname
+    ...CommonUser
   }
 }
-    `;
+    ${CommonUserFragmentDoc}`;
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
@@ -220,13 +246,10 @@ export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'q
 export const ProfileDocument = gql`
     query Profile {
   profile {
-    id
-    username
-    firstname
-    lastname
+    ...CompleteUser
   }
 }
-    `;
+    ${CompleteUserFragmentDoc}`;
 
 export function useProfileQuery(options: Omit<Urql.UseQueryArgs<ProfileQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<ProfileQuery>({ query: ProfileDocument, ...options });

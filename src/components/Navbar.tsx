@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
+import { Box, Flex, Image, Link, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/core';
 import React from 'react'
 import NextLink from 'next/link';
 

@@ -1,0 +1,17 @@
+fragment BasicUser on User {
+  id,
+  username,
+}
+
+fragment CommonUser on User {
+  id,
+  username,
+  firstname
+}
+
+fragment CompleteUser on User {
+  id, 
+  username,
+  firstname,
+  lastname
+}

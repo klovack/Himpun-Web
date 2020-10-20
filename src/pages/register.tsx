@@ -22,7 +22,16 @@ const Register: React.FC<registerProps> = ({}) => {
         initialValues={{ username: "", password: "", firstname: "", lastname: ""}}
         validationSchema={RegisterSchema}
         onSubmit={async (values, {setErrors}) => {
-          const response = await register(values);
+          const response = await register({
+            credentials: {
+              username: values.username,
+              password: values.password,
+            },
+            options: {
+              firstname: values.firstname,
+              lastname: values.lastname,
+            }
+          });
 
           // Check the credentials validity
           // and if it isn't valid throw the error through the chakra error.
