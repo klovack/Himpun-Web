@@ -1,9 +1,17 @@
 import { FieldError } from "../generated/graphql";
 
-export const mapError = (errors: FieldError[]) => {
+export type ErrorOverrideOption = {
+  [type: string]: string;
+}
+
+export const mapError = (errors: FieldError[], option?: ErrorOverrideOption) => {
   const map: Record<string, string> = {};
   errors.forEach(({field, message}: FieldError) => {
-    map[field] = message;
+    let key = field;
+    if (option && option[field]) {
+      key = option[field];
+    }
+    map[key] = message;
   });
 
   return map;
