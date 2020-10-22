@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 
 import {useMeQuery, useLogoutMutation} from '../generated/graphql'
 import { Wrapper } from './Wrapper';
+import { isServer } from '../util/isServer';
 
 interface NavbarProps {
   
@@ -11,7 +12,9 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({}) => {
   const [{fetching: logoutFetching}, logout] = useLogoutMutation();
-  const [ {data, fetching} ] = useMeQuery();
+  const [ {data, fetching} ] = useMeQuery({
+    pause: isServer(),
+  });
 
   // Determine the states of the login
   let body = null;

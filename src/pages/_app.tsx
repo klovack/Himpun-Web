@@ -1,39 +1,16 @@
-import { ThemeProvider, CSSReset, ColorModeProvider } from '@chakra-ui/core'
-import { createClient, dedupExchange, fetchExchange, Provider } from 'urql'
-import { cacheExchange } from '@urql/exchange-graphcache';
-import { Navbar } from '../components/Navbar';
+import { ColorModeProvider, CSSReset, ThemeProvider } from '@chakra-ui/core';
 
-import theme from '../theme'
-import { loginQueryCacheExchange, logoutQueryCacheExchange, registerQueryCacheExchange } from '../util/updateQuery';
-
-const client = createClient({ 
-  url: 'http://localhost:4000/graphql',
-  fetchOptions: {
-    credentials: "include",
-  },
-  exchanges: [dedupExchange, cacheExchange({
-    updates: {
-      Mutation: {
-        logout: logoutQueryCacheExchange,
-        login: loginQueryCacheExchange,
-        register: registerQueryCacheExchange,
-      }
-    }
-  }), fetchExchange]
-});
+import theme from '../theme';
 
 function MyApp({ Component, pageProps }: any) {
   return (
-    <Provider value={client}>
-      <ThemeProvider theme={theme}>
-        <ColorModeProvider>
-          <CSSReset />
-          <Navbar></Navbar>
-          <Component {...pageProps} />
-        </ColorModeProvider>
-      </ThemeProvider>
-    </Provider>
-  )
+    <ThemeProvider theme={theme}>
+      <ColorModeProvider>
+        <CSSReset />
+        <Component {...pageProps} />
+      </ColorModeProvider>
+    </ThemeProvider>
+  );
 }
 
-export default MyApp
+export default MyApp;
