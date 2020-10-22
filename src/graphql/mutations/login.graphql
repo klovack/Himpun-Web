@@ -1,4 +1,4 @@
-mutation Login($credentials: UsernamePasswordInput!){
+mutation Login($credentials: LoginInput!){
   login(credentials: $credentials) {
     errors {
       field

@@ -1,17 +1,20 @@
 fragment BasicUser on User {
   id,
   username,
+  email,
 }
 
 fragment CommonUser on User {
   id,
   username,
+  email,
   firstname
 }
 
 fragment CompleteUser on User {
   id, 
   username,
+  email,
   firstname,
   lastname
 }
