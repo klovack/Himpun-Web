@@ -24,16 +24,16 @@ const Login: React.FC<loginProps> = ({}) => {
       <Wrapper
         size="small">
         <Formik
-          initialValues={{ username: "", password: "", }}
+          initialValues={{ usernameOrEmail: "", password: "", }}
           validationSchema={LoginSchema}
           onSubmit={async (values, {setErrors}) => {
             const response = await login({credentials: values });
-
+            console.log(response.data);
             // Check the credentials validity
             // and if it isn't valid throw the error through the chakra error.
             // otherwise move user to the homepage
             if (response.data?.login.errors) {
-              setErrors(mapError(response.data.login.errors));
+              setErrors(mapError(response.data.login.errors, { username: "usernameOrEmail", email: "usernameOrEmail"}));
             } else if (response.data?.login.user) {
               router.push("/");
             }
@@ -46,9 +46,9 @@ const Login: React.FC<loginProps> = ({}) => {
                 noMaxWidth
               >
                 <InputField
-                  name= "username"
-                  label="Username"
-                  placeholder="username"
+                  name= "usernameOrEmail"
+                  label="Username/Email"
+                  placeholder="username or email"
                 ></InputField>
               </Wrapper>
 
@@ -72,7 +72,7 @@ const Login: React.FC<loginProps> = ({}) => {
                   variantColor="teal"
                   isLoading={isSubmitting}
                   type="submit"
-                  loadingText="Registering"
+                  loadingText="Logging In"
                 >
                   Login
                 </Button>
