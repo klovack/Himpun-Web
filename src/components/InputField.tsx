@@ -1,6 +1,6 @@
-import { FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/core';
+import { FormControl, FormErrorMessage, FormLabel, IconButton, Input, InputGroup, InputRightElement } from '@chakra-ui/core';
 import { useField } from 'formik';
-import React, { InputHTMLAttributes } from 'react'
+import React, { InputHTMLAttributes, useState } from 'react'
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   name: string,
@@ -10,19 +10,52 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 export const InputField: React.FC<InputFieldProps> = ({
   label,
   size: _,
+  type,
   ...props
 }) => {
   const [field, {error, touched}] = useField(props);
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
 
-  return (
-    <FormControl isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+  let inputField;
+  if (type && type === "password") {
+    
+    inputField = (
+      <InputGroup size="md">
+        <Input
+          pr="4.5rem"
+          type={show ? "text" : "password"}
+          variant="flushed"
+          {...field}
+          {...props}
+          id={field.name}
+          placeholder={props.placeholder}
+        />
+        <InputRightElement width="4.5rem">
+          <IconButton
+            aria-label="Show password or Hide"
+            onClick={handleClick}
+            variant="ghost"
+            icon={show ? "view" : "view-off"} />
+        </InputRightElement>
+      </InputGroup>
+    );
+  } else {
+    inputField = (
       <Input
+        type={type}
         {...field}
         {...props}
         id={field.name}
         variant="flushed"
         placeholder={props.placeholder} />
+    );
+  }
+
+  return (
+    <FormControl isInvalid={!!error}>
+      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+      {inputField}
       { error && touched ? <FormErrorMessage>{error}</FormErrorMessage> : null }
     </FormControl>
   );
