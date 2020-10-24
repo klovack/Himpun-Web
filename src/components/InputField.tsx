@@ -23,7 +23,6 @@ export const InputField: React.FC<InputFieldProps> = ({
     inputField = (
       <InputGroup size="md">
         <Input
-          pr="4.5rem"
           type={show ? "text" : "password"}
           variant="flushed"
           {...field}
@@ -31,7 +30,7 @@ export const InputField: React.FC<InputFieldProps> = ({
           id={field.name}
           placeholder={props.placeholder}
         />
-        <InputRightElement width="4.5rem">
+        <InputRightElement>
           <IconButton
             aria-label="Show password or Hide"
             onClick={handleClick}
