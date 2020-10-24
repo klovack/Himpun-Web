@@ -34,7 +34,16 @@ const LoginSchema = Yup.object().shape({
     .required('Required'),
 });
 
+const ChangePasswordSchema = Yup.object().shape({
+  newPassword: Yup.string()
+    .min(8, 'Too Short!')
+    .max(50, 'Too Long!')
+    .matches(PASSWORD_REGEX, { message: 'Must have minimum one lowercase and one uppercase character, one number and one special character.' })
+    .required('Required')
+});
+
 export {
   RegisterSchema,
-  LoginSchema
+  LoginSchema,
+  ChangePasswordSchema
 }
