@@ -1,8 +1,7 @@
 mutation Login($credentials: LoginInput!){
   login(credentials: $credentials) {
     errors {
-      field
-      message
+      ...RegularError
     }
     user {
       ...CompleteUser

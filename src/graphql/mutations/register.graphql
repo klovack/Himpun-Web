@@ -4,8 +4,7 @@ mutation Register($credentials: CredentialInput!, $options: NameInput){
     options: $options
   ) {
     errors {
-      field
-      message
+      ...RegularError
     }
     user {
       ...CompleteUser
