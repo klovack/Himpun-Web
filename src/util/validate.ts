@@ -42,8 +42,15 @@ const ChangePasswordSchema = Yup.object().shape({
     .required('Required')
 });
 
+const EmailSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Should be a valid email')
+    .required('Required'),
+});
+
 export {
   RegisterSchema,
   LoginSchema,
-  ChangePasswordSchema
+  ChangePasswordSchema,
+  EmailSchema,
 }
