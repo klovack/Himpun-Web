@@ -4,7 +4,7 @@ import React, { InputHTMLAttributes, useState } from 'react'
 
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   name: string,
-  label: string,
+  label?: string,
 };
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -53,7 +53,9 @@ export const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <FormControl isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
+      {!!label && (
+        <FormLabel htmlFor={field.name}>{label}</FormLabel>
+      )}
       {inputField}
       { error && touched ? <FormErrorMessage>{error}</FormErrorMessage> : null }
     </FormControl>
