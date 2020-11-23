@@ -1,5 +1,9 @@
-query Posts {
-  posts {
+query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
+  posts(
+  	limit: $limit,
+    cursor: $cursor,
+  	filter: $filter
+  ) {
     ...BasicPost
   }
 }

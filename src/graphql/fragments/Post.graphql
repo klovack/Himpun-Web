@@ -3,4 +3,21 @@ fragment BasicPost on Post {
   createdAt
   updatedAt
   title
+  body
+  featuredImage {
+    url
+  }
+  author {
+    id
+    username
+  }
+  votes {
+    username
+  }
+  likes {
+    username
+  }
+  dislikes {
+    username
+  }
 }

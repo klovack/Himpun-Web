@@ -26,6 +26,8 @@ export type Query = {
 
 export type QueryPostsArgs = {
   filter?: Maybe<PostFilterInput>;
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -197,7 +199,23 @@ export type RegularErrorFragment = (
 
 export type BasicPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & { featuredImage?: Maybe<(
+    { __typename?: 'Media' }
+    & Pick<Media, '[object Object]'>
+  )>, author: (
+    { __typename?: 'User' }
+    & Pick<User, '[object Object]' | '[object Object]'>
+  ), votes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, '[object Object]'>
+  )>>, likes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, '[object Object]'>
+  )>>, dislikes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, '[object Object]'>
+  )>> }
 );
 
 export type BasicUserFragment = (
@@ -311,7 +329,11 @@ export type RegisterMutation = (
   ) }
 );
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  filter?: Maybe<PostFilterInput>;
+}>;
 
 
 export type PostsQuery = (
@@ -379,6 +401,23 @@ export const BasicPostFragmentDoc = gql`
   createdAt
   updatedAt
   title
+  body
+  featuredImage {
+    url
+  }
+  author {
+    id
+    username
+  }
+  votes {
+    username
+  }
+  likes {
+    username
+  }
+  dislikes {
+    username
+  }
 }
     `;
 export const BasicUserFragmentDoc = gql`
@@ -500,8 +539,8 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const PostsDocument = gql`
-    query Posts {
-  posts {
+    query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
+  posts(limit: $limit, cursor: $cursor, filter: $filter) {
     ...BasicPost
   }
 }
