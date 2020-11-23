@@ -14,19 +14,20 @@ import { ChangePasswordSchema } from '../../util/validate';
 import { useTokenValidQuery, useChangePasswordMutation } from '../../generated/graphql';
 import { mapError } from '../../util/mapError';
 
-const ResetPassword: NextPage<{token: string}> = ({token}) => {
+const ResetPassword: NextPage = () => {
   // Handle routing when the token is invalid or expired
   const router = useRouter();
-  const [{data, }] = useTokenValidQuery({
+  const token = typeof router.query.token === "string" ? router.query.token : "";
+  const [{data, fetching }] = useTokenValidQuery({
     variables: {
       token,
     },
   });
   useEffect(() => {
-    if (!data?.tokenValid) {
+    if (!fetching && !data?.tokenValid) {
       router.replace("/");
     }
-  }, [token]);
+  }, [token, fetching]);
 
   const [, changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState('');
@@ -109,11 +110,5 @@ const ResetPassword: NextPage<{token: string}> = ({token}) => {
     </>
   );
 }
-
-ResetPassword.getInitialProps = (ctx: NextPageContext) => {
-  return {
-    token: ctx.query.token as string,
-  };
-};
 
 export default withUrqlClient(createUrqlClient)(ResetPassword);

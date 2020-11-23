@@ -12,6 +12,7 @@ import { mapError } from '../util/mapError';
 import { LoginSchema } from '../util/validate';
 import { Navbar } from '../components/Navbar';
 import { createUrqlClient } from '../util/urqlClient';
+import { strconv } from '../util/strconv';
 
 interface loginProps {}
 
@@ -36,7 +37,11 @@ const Login: React.FC<loginProps> = ({}) => {
             if (response.data?.login.errors) {
               setErrors(mapError(response.data.login.errors, { username: "usernameOrEmail", email: "usernameOrEmail"}));
             } else if (response.data?.login.user) {
-              router.push("/");
+              if (typeof router.query.redirect === "string") {
+                router.push("/" + strconv.camelCaseToHyphens(router.query.redirect));
+              } else {
+                router.push("/");
+              }
             }
           }}
         >

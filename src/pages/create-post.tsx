@@ -1,36 +1,32 @@
-import React, { useEffect } from 'react';
+import { Button } from '@chakra-ui/core';
+import { Form, Formik } from 'formik';
 import { withUrqlClient } from 'next-urql';
 import dynamic from "next/dynamic";
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import { useRouter } from 'next/router';
+import React from 'react';
 import 'react-quill/dist/quill.bubble.css';
-
-import { createUrqlClient } from '../util/urqlClient';
+import { InputField } from '../components/InputField';
 import { Navbar } from '../components/Navbar';
 import { Wrapper } from '../components/Wrapper';
-import { Form, Formik } from 'formik';
-import { InputField } from '../components/InputField';
-import { Button } from '@chakra-ui/core';
-import { CreatePostSchema } from '../util/validate';
-import { useCreatePostMutation, useProfileQuery } from '../generated/graphql';
-import { useRouter } from 'next/router';
+import { useCreatePostMutation } from '../generated/graphql';
 import { isServer } from '../util/isServer';
+import { createUrqlClient } from '../util/urqlClient';
+import { useIsAuth } from '../util/useIsAuth';
+import { CreatePostSchema } from '../util/validate';
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 
 interface CreatePostProps {
-  
+
 }
 
 const POST_LOCAL_STORAGE_NAME = "unsentPost";
 
-const CreatePost: React.FC<CreatePostProps> = ({}) => {
-  const [{data, fetching}] = useProfileQuery();
-  const [,createPost] = useCreatePostMutation();
+const CreatePost: React.FC<CreatePostProps> = ({ }) => {
+  const [, createPost] = useCreatePostMutation();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!fetching && !data?.profile) {
-      router.replace("/login?redirect=createPost")
-    }
-  }, [data, router, fetching]);
+  useIsAuth("create-post");
 
   let defaultValue = {
     postBody: "",
@@ -61,7 +57,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
       }
     });
 
-    const {error} = res;
+    const { error } = res;
 
     if (!error) {
       localStorage.removeItem(POST_LOCAL_STORAGE_NAME);
@@ -72,15 +68,15 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
   return (
     <>
       <Navbar></Navbar>
-      
+
       <Wrapper
         size="regular"
         className="create-post"
       >
-        <Formik          
+        <Formik
           initialValues={{ postBody: defaultValue.postBody, postTitle: defaultValue.postTitle, }}
           validationSchema={CreatePostSchema}
-          onSubmit={(values) => handlePostRequest(values, true)} 
+          onSubmit={(values) => handlePostRequest(values, true)}
         >
           {({ setFieldValue, values, isSubmitting, errors }) => (
             <Form className="create-post__form">
@@ -112,9 +108,9 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                   placeholder="Title of the post"
                   className="create-post__input__title"
                 />
-                
+
                 <ReactQuill
-                  placeholder={errors.postBody ? errors.postBody : "Write your story..." }
+                  placeholder={errors.postBody ? errors.postBody : "Write your story..."}
                   className="create-post__input__body"
                   id="postBody"
                   theme="bubble"
