@@ -13,8 +13,11 @@ import { createUrqlClient } from '../../util/urqlClient';
 import { ChangePasswordSchema } from '../../util/validate';
 import { useTokenValidQuery, useChangePasswordMutation } from '../../generated/graphql';
 import { mapError } from '../../util/mapError';
+import { useIsAuth } from '../../util/useIsAuth';
 
 const ResetPassword: NextPage = () => {
+  useIsAuth('', true);
+
   // Handle routing when the token is invalid or expired
   const router = useRouter();
   const token = typeof router.query.token === "string" ? router.query.token : "";

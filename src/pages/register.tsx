@@ -11,12 +11,15 @@ import { mapError } from '../util/mapError';
 import { RegisterSchema } from '../util/validate';
 import { Navbar } from '../components/Navbar';
 import { createUrqlClient } from '../util/urqlClient';
+import { useIsAuth } from '../util/useIsAuth';
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   const [, register] = useRegisterMutation();
+
+  useIsAuth('', true);
   
   return (
     <>

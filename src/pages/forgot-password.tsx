@@ -10,10 +10,13 @@ import { Wrapper } from '../components/Wrapper';
 import { createUrqlClient } from '../util/urqlClient';
 import { EmailSchema } from '../util/validate';
 import { useForgotPasswordMutation } from '../generated/graphql';
+import { useIsAuth } from '../util/useIsAuth';
 
 interface forgotPasswordProps {}
 
 const ForgotPassword: React.FC<forgotPasswordProps> = ({}) => {
+  useIsAuth('', true);
+  
   const router = useRouter();
   const goBack = () => {
     router.back();

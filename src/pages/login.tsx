@@ -13,12 +13,15 @@ import { LoginSchema } from '../util/validate';
 import { Navbar } from '../components/Navbar';
 import { createUrqlClient } from '../util/urqlClient';
 import { strconv } from '../util/strconv';
+import { useIsAuth } from '../util/useIsAuth';
 
 interface loginProps {}
 
 const Login: React.FC<loginProps> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
+
+  useIsAuth('', true);
   
   return (
     <>
