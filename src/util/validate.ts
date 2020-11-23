@@ -48,9 +48,17 @@ const EmailSchema = Yup.object().shape({
     .required('Required'),
 });
 
+const CreatePostSchema = Yup.object().shape({
+  postTitle: Yup.string()
+    .required('Title and body are required'),
+  postBody: Yup.string()
+    .required('Post Body is required'),
+});
+
 export {
   RegisterSchema,
   LoginSchema,
   ChangePasswordSchema,
   EmailSchema,
+  CreatePostSchema,
 }

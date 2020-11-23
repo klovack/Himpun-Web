@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { withUrqlClient } from 'next-urql';
 import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -9,13 +9,65 @@ import { Navbar } from '../components/Navbar';
 import { Wrapper } from '../components/Wrapper';
 import { Form, Formik } from 'formik';
 import { InputField } from '../components/InputField';
-import { Box, Button, Flex } from '@chakra-ui/core';
+import { Button } from '@chakra-ui/core';
+import { CreatePostSchema } from '../util/validate';
+import { useCreatePostMutation, useProfileQuery } from '../generated/graphql';
+import { useRouter } from 'next/router';
+import { isServer } from '../util/isServer';
 
 interface CreatePostProps {
   
 }
 
+const POST_LOCAL_STORAGE_NAME = "unsentPost";
+
 const CreatePost: React.FC<CreatePostProps> = ({}) => {
+  const [{data, fetching}] = useProfileQuery();
+  const [,createPost] = useCreatePostMutation();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!fetching && !data?.profile) {
+      router.replace("/login?redirect=createPost")
+    }
+  }, [data, router, fetching]);
+
+  let defaultValue = {
+    postBody: "",
+    postTitle: ""
+  };
+
+  if (!isServer()) {
+    const unsentPostString = localStorage.getItem(POST_LOCAL_STORAGE_NAME);
+    if (!!unsentPostString) {
+      const unsentPost = JSON.parse(unsentPostString);
+      defaultValue = {
+        postBody: unsentPost?.postBody ? unsentPost?.postBody : "",
+        postTitle: unsentPost?.postTitle ? unsentPost?.postTitle : "",
+      };
+    }
+  }
+
+  const handlePostRequest = async (values: {
+    postBody: string,
+    postTitle: string,
+  }, isPublished: boolean = false) => {
+    localStorage.setItem(POST_LOCAL_STORAGE_NAME, JSON.stringify(values));
+    const res = await createPost({
+      data: {
+        title: values.postTitle,
+        body: values.postBody,
+        isPublished,
+      }
+    });
+
+    const {error} = res;
+
+    if (!error) {
+      localStorage.removeItem(POST_LOCAL_STORAGE_NAME);
+      router.push("/");
+    }
+  };
 
   return (
     <>
@@ -26,13 +78,11 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
         className="create-post"
       >
         <Formik          
-          initialValues={{ postBody: "", postTitle: "", }}
-          // validationSchema={LoginSchema}
-          onSubmit={(values, {setErrors}) => {
-            console.log(values);
-          }}
+          initialValues={{ postBody: defaultValue.postBody, postTitle: defaultValue.postTitle, }}
+          validationSchema={CreatePostSchema}
+          onSubmit={(values) => handlePostRequest(values, true)} 
         >
-          {({ setFieldValue, values, isSubmitting }) => (
+          {({ setFieldValue, values, isSubmitting, errors }) => (
             <Form className="create-post__form">
               <div className="create-post__action">
                 <Button
@@ -40,6 +90,10 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                   variantColor="red"
                   type="button"
                   loadingText="Saving"
+                  onClick={() => handlePostRequest({
+                    postBody: values.postBody,
+                    postTitle: values.postTitle,
+                  })}
                 >Save &amp; Close</Button>
 
                 <Button
@@ -60,7 +114,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
                 />
                 
                 <ReactQuill
-                  placeholder="Write your story"
+                  placeholder={errors.postBody ? errors.postBody : "Write your story..." }
                   className="create-post__input__body"
                   id="postBody"
                   theme="bubble"

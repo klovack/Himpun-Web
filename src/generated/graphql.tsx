@@ -10,6 +10,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
 export type Query = {
@@ -22,8 +24,13 @@ export type Query = {
 };
 
 
+export type QueryPostsArgs = {
+  filter?: Maybe<PostFilterInput>;
+};
+
+
 export type QueryPostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -33,11 +40,37 @@ export type QueryTokenValidArgs = {
 
 export type Post = {
   __typename?: 'Post';
-  id: Scalars['Int'];
+  id: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   title: Scalars['String'];
+  body?: Maybe<Scalars['String']>;
+  isPublished?: Maybe<Scalars['Boolean']>;
+  featuredImage?: Maybe<Media>;
+  author: User;
+  votes?: Maybe<Array<User>>;
+  likes?: Maybe<Array<User>>;
+  dislikes?: Maybe<Array<User>>;
 };
+
+export type Media = {
+  __typename?: 'Media';
+  id: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  name: Scalars['String'];
+  url: Scalars['String'];
+  mediaType: MediaType;
+  authorId: Scalars['String'];
+};
+
+/** Avalable types for media entities */
+export enum MediaType {
+  Image = 'IMAGE',
+  Audio = 'AUDIO',
+  Video = 'VIDEO',
+  Pdf = 'PDF'
+}
 
 export type User = {
   __typename?: 'User';
@@ -48,11 +81,29 @@ export type User = {
   email: Scalars['String'];
   firstname?: Maybe<Scalars['String']>;
   lastname?: Maybe<Scalars['String']>;
+  posts?: Maybe<Array<Post>>;
+  medias?: Maybe<Array<Media>>;
 };
+
+export type PostFilterInput = {
+  author?: Maybe<Scalars['String']>;
+  isPublished?: Maybe<Scalars['Boolean']>;
+  votes?: Maybe<Scalars['String']>;
+  likes?: Maybe<Scalars['String']>;
+  dislikes?: Maybe<Scalars['String']>;
+  searchableWord?: Maybe<Scalars['String']>;
+  timespan?: Maybe<TimespanInput>;
+};
+
+export type TimespanInput = {
+  timeStart?: Maybe<Scalars['DateTime']>;
+  timeEnd?: Maybe<Scalars['DateTime']>;
+};
+
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createPost: Post;
+  createPost?: Maybe<Post>;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
   changePassword: UserResponse;
@@ -64,18 +115,18 @@ export type Mutation = {
 
 
 export type MutationCreatePostArgs = {
-  title: Scalars['String'];
+  data: PostInput;
 };
 
 
 export type MutationUpdatePostArgs = {
   title?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDeletePostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['String'];
 };
 
 
@@ -97,6 +148,13 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   credentials: LoginInput;
+};
+
+export type PostInput = {
+  title: Scalars['String'];
+  body?: Maybe<Scalars['String']>;
+  featuredImageId?: Maybe<Scalars['String']>;
+  isPublished?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserResponse = {
@@ -134,27 +192,27 @@ export type LoginInput = {
 
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
-  & Pick<FieldError, 'field' | 'message'>
+  & Pick<FieldError, '[object Object]' | '[object Object]'>
 );
 
 export type BasicPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title'>
+  & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type BasicUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username' | 'email'>
+  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type CommonUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username' | 'email' | 'firstname'>
+  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type CompleteUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
+  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -176,6 +234,26 @@ export type ChangePasswordMutation = (
   ) }
 );
 
+export type CreatePostMutationVariables = Exact<{
+  data: PostInput;
+}>;
+
+
+export type CreatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost?: Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+    & { author: (
+      { __typename?: 'User' }
+      & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+    ), featuredImage?: Maybe<(
+      { __typename?: 'Media' }
+      & Pick<Media, '[object Object]' | '[object Object]'>
+    )> }
+  )> }
+);
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -183,7 +261,7 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'forgotPassword'>
+  & Pick<Mutation, '[object Object]'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -210,7 +288,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'logout'>
+  & Pick<Mutation, '[object Object]'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -245,7 +323,7 @@ export type PostsQuery = (
 );
 
 export type PostQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['String'];
 }>;
 
 
@@ -286,7 +364,7 @@ export type TokenValidQueryVariables = Exact<{
 
 export type TokenValidQuery = (
   { __typename?: 'Query' }
-  & Pick<Query, 'tokenValid'>
+  & Pick<Query, '[object Object]'>
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -343,6 +421,31 @@ ${CompleteUserFragmentDoc}`;
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
+export const CreatePostDocument = gql`
+    mutation CreatePost($data: PostInput!) {
+  createPost(data: $data) {
+    id
+    createdAt
+    updatedAt
+    title
+    body
+    author {
+      firstname
+      lastname
+      id
+      username
+    }
+    featuredImage {
+      url
+      mediaType
+    }
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
@@ -408,7 +511,7 @@ export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariable
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
 };
 export const PostDocument = gql`
-    query Post($id: Int!) {
+    query Post($id: String!) {
   post(id: $id) {
     ...BasicPost
   }
