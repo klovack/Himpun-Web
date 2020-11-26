@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -194,43 +196,43 @@ export type LoginInput = {
 
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
-  & Pick<FieldError, '[object Object]' | '[object Object]'>
+  & Pick<FieldError, 'field' | 'message'>
 );
 
 export type BasicPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'body' | 'isPublished'>
   & { featuredImage?: Maybe<(
     { __typename?: 'Media' }
-    & Pick<Media, '[object Object]'>
+    & Pick<Media, 'url'>
   )>, author: (
     { __typename?: 'User' }
-    & Pick<User, '[object Object]' | '[object Object]'>
+    & Pick<User, 'id' | 'username'>
   ), votes?: Maybe<Array<(
     { __typename?: 'User' }
-    & Pick<User, '[object Object]'>
+    & Pick<User, 'username'>
   )>>, likes?: Maybe<Array<(
     { __typename?: 'User' }
-    & Pick<User, '[object Object]'>
+    & Pick<User, 'username'>
   )>>, dislikes?: Maybe<Array<(
     { __typename?: 'User' }
-    & Pick<User, '[object Object]'>
+    & Pick<User, 'username'>
   )>> }
 );
 
 export type BasicUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<User, 'id' | 'username' | 'email'>
 );
 
 export type CommonUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<User, 'id' | 'username' | 'email' | 'firstname'>
 );
 
 export type CompleteUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<User, 'id' | 'username' | 'email' | 'firstname' | 'lastname'>
 );
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -261,14 +263,7 @@ export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost?: Maybe<(
     { __typename?: 'Post' }
-    & Pick<Post, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
-    & { author: (
-      { __typename?: 'User' }
-      & Pick<User, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
-    ), featuredImage?: Maybe<(
-      { __typename?: 'Media' }
-      & Pick<Media, '[object Object]' | '[object Object]'>
-    )> }
+    & BasicPostFragment
   )> }
 );
 
@@ -279,7 +274,7 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, '[object Object]'>
+  & Pick<Mutation, 'forgotPassword'>
 );
 
 export type LoginMutationVariables = Exact<{
@@ -306,7 +301,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, '[object Object]'>
+  & Pick<Mutation, 'logout'>
 );
 
 export type RegisterMutationVariables = Exact<{
@@ -386,7 +381,7 @@ export type TokenValidQueryVariables = Exact<{
 
 export type TokenValidQuery = (
   { __typename?: 'Query' }
-  & Pick<Query, '[object Object]'>
+  & Pick<Query, 'tokenValid'>
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -402,6 +397,7 @@ export const BasicPostFragmentDoc = gql`
   updatedAt
   title
   body
+  isPublished
   featuredImage {
     url
   }
@@ -464,24 +460,10 @@ export function useChangePasswordMutation() {
 export const CreatePostDocument = gql`
     mutation CreatePost($data: PostInput!) {
   createPost(data: $data) {
-    id
-    createdAt
-    updatedAt
-    title
-    body
-    author {
-      firstname
-      lastname
-      id
-      username
-    }
-    featuredImage {
-      url
-      mediaType
-    }
+    ...BasicPost
   }
 }
-    `;
+    ${BasicPostFragmentDoc}`;
 
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);

@@ -4,6 +4,7 @@ fragment BasicPost on Post {
   updatedAt
   title
   body
+  isPublished
   featuredImage {
     url
   }
