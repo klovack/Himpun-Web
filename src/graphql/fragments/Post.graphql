@@ -22,3 +22,28 @@ fragment BasicPost on Post {
     username
   }
 }
+
+fragment SnippetPost on Post {
+  id
+  createdAt
+  updatedAt
+  title
+  bodySnippet
+  isPublished
+  featuredImage {
+    url
+  }
+  author {
+    id
+    username
+  }
+  votes {
+    username
+  }
+  likes {
+    username
+  }
+  dislikes {
+    username
+  }
+}

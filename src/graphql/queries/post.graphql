@@ -4,7 +4,7 @@ query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
     cursor: $cursor,
   	filter: $filter
   ) {
-    ...BasicPost
+    ...SnippetPost
   }
 }
 

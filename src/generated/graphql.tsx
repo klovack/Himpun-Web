@@ -55,6 +55,7 @@ export type Post = {
   votes?: Maybe<Array<User>>;
   likes?: Maybe<Array<User>>;
   dislikes?: Maybe<Array<User>>;
+  bodySnippet: Scalars['String'];
 };
 
 export type Media = {
@@ -220,6 +221,27 @@ export type BasicPostFragment = (
   )>> }
 );
 
+export type SnippetPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'bodySnippet' | 'isPublished'>
+  & { featuredImage?: Maybe<(
+    { __typename?: 'Media' }
+    & Pick<Media, 'url'>
+  )>, author: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username'>
+  ), votes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'username'>
+  )>>, likes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'username'>
+  )>>, dislikes?: Maybe<Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'username'>
+  )>> }
+);
+
 export type BasicUserFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'username' | 'email'>
@@ -335,7 +357,7 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & BasicPostFragment
+    & SnippetPostFragment
   )> }
 );
 
@@ -397,6 +419,32 @@ export const BasicPostFragmentDoc = gql`
   updatedAt
   title
   body
+  isPublished
+  featuredImage {
+    url
+  }
+  author {
+    id
+    username
+  }
+  votes {
+    username
+  }
+  likes {
+    username
+  }
+  dislikes {
+    username
+  }
+}
+    `;
+export const SnippetPostFragmentDoc = gql`
+    fragment SnippetPost on Post {
+  id
+  createdAt
+  updatedAt
+  title
+  bodySnippet
   isPublished
   featuredImage {
     url
@@ -523,10 +571,10 @@ export function useRegisterMutation() {
 export const PostsDocument = gql`
     query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
   posts(limit: $limit, cursor: $cursor, filter: $filter) {
-    ...BasicPost
+    ...SnippetPost
   }
 }
-    ${BasicPostFragmentDoc}`;
+    ${SnippetPostFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });
