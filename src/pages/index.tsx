@@ -2,12 +2,16 @@ import {} from 'next/app';
 import React, { useState } from 'react';
 import { withUrqlClient } from 'next-urql';
 import NextLink from 'next/link';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { createUrqlClient } from '../util/urqlClient';
 import { usePostsQuery } from '../generated/graphql';
 import { Navbar } from '../components/Navbar';
-import { Box, Button, Heading, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/core';
 import { Wrapper } from '../components/Wrapper';
+
+dayjs.extend(relativeTime);
 
 const Index = () => {
     const [variables, setVariables] = useState({
@@ -43,8 +47,15 @@ const Index = () => {
                     ) : data?.posts.posts.map((post) => {
                         return (
                             <Box borderRadius="5px" backgroundColor="white" key={post.id} p={5} shadow="xs" borderWidth="1px">
+                                <Text fontSize="xs" mb={2}>
+                                    Posted by <NextLink href={`/u/${post.author.username}`}>
+                                        <Link>
+                                            {post.author.username}
+                                        </Link>
+                                    </NextLink> {dayjs(new Date(parseInt(post.createdAt))).fromNow()}
+                                </Text>
                                 <Heading fontSize="lg">{post.title}</Heading>
-                                <Text mt={4}>{post.bodySnippet}</Text>
+                                <Text mt={4}>{post.bodySnippet}...</Text>
                             </Box>
                         );
                     })}
