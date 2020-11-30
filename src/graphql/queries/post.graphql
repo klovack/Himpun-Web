@@ -4,7 +4,10 @@ query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
     cursor: $cursor,
   	filter: $filter
   ) {
-    ...SnippetPost
+    hasMore
+    posts{
+      ...SnippetPost
+    }
   }
 }
 

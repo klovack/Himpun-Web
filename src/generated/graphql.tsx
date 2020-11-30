@@ -19,7 +19,7 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  posts: Array<Post>;
+  posts: PostPaginationResponse;
   post?: Maybe<Post>;
   profile?: Maybe<User>;
   tokenValid: Scalars['Boolean'];
@@ -40,6 +40,12 @@ export type QueryPostArgs = {
 
 export type QueryTokenValidArgs = {
   token: Scalars['String'];
+};
+
+export type PostPaginationResponse = {
+  __typename?: 'PostPaginationResponse';
+  posts: Array<Post>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Post = {
@@ -355,10 +361,14 @@ export type PostsQueryVariables = Exact<{
 
 export type PostsQuery = (
   { __typename?: 'Query' }
-  & { posts: Array<(
-    { __typename?: 'Post' }
-    & SnippetPostFragment
-  )> }
+  & { posts: (
+    { __typename?: 'PostPaginationResponse' }
+    & Pick<PostPaginationResponse, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & SnippetPostFragment
+    )> }
+  ) }
 );
 
 export type PostQueryVariables = Exact<{
@@ -571,7 +581,10 @@ export function useRegisterMutation() {
 export const PostsDocument = gql`
     query Posts($limit: Int!, $cursor: String, $filter: PostFilterInput) {
   posts(limit: $limit, cursor: $cursor, filter: $filter) {
-    ...SnippetPost
+    hasMore
+    posts {
+      ...SnippetPost
+    }
   }
 }
     ${SnippetPostFragmentDoc}`;

@@ -17,7 +17,7 @@ const Index = () => {
             isPublished: true,
         }
     });
-    const [{data, fetching}] = usePostsQuery({
+    const [{data, fetching, stale}] = usePostsQuery({
         variables,
     });
     
@@ -40,7 +40,7 @@ const Index = () => {
                         <Box borderRadius="5px" backgroundColor="white" p={5} shadow="xs" borderWidth="1px">
                             <Heading fontSize="lg">Oops! Something went wrong</Heading>
                         </Box>
-                    ) : data?.posts.map((post) => {
+                    ) : data?.posts.posts.map((post) => {
                         return (
                             <Box borderRadius="5px" backgroundColor="white" key={post.id} p={5} shadow="xs" borderWidth="1px">
                                 <Heading fontSize="lg">{post.title}</Heading>
@@ -49,19 +49,19 @@ const Index = () => {
                         );
                     })}
 
-                    {data && (
+                    {(data && data.posts.hasMore) ? (
                         <Button 
                             onClick={() => {
                                 setVariables({
                                     limit: variables.limit,
-                                    cursor: data.posts[data.posts.length - 1].createdAt,
+                                    cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
                                     filter: {
                                         isPublished: true,
                                     }
                                 });
                             }}
-                            isLoading={fetching}>Load More</Button>
-                    )}
+                            isLoading={stale}>Load More</Button>
+                    ): null}
                 </Stack>
             </Wrapper>
         </>
