@@ -4,7 +4,6 @@ import { withUrqlClient } from 'next-urql';
 import dynamic from "next/dynamic";
 import { useRouter } from 'next/router';
 import React from 'react';
-import 'react-quill/dist/quill.bubble.css';
 import { InputField } from '../components/InputField';
 import { Navbar } from '../components/Navbar';
 import { Wrapper } from '../components/Wrapper';
@@ -84,6 +83,14 @@ const CreatePost: React.FC<CreatePostProps> = ({ }) => {
                 <Button
                   variant="ghost"
                   variantColor="red"
+                  type="button"
+                  loadingText="Closing"
+                  onClick={() => router.push("/")}
+                >Discard</Button>
+
+                <Button
+                  variant="ghost"
+                  variantColor="teal"
                   type="button"
                   loadingText="Saving"
                   onClick={() => handlePostRequest({

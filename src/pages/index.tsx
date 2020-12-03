@@ -4,12 +4,15 @@ import { withUrqlClient } from 'next-urql';
 import NextLink from 'next/link';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 import { createUrqlClient } from '../util/urqlClient';
 import { usePostsQuery } from '../generated/graphql';
 import { Navbar } from '../components/Navbar';
 import { Box, Button, Heading, Link, Stack, Text } from '@chakra-ui/core';
 import { Wrapper } from '../components/Wrapper';
+import { isServer } from '../util/isServer';
 
 dayjs.extend(relativeTime);
 
@@ -55,7 +58,16 @@ const Index = () => {
                                     </NextLink> {dayjs(new Date(parseInt(post.createdAt))).fromNow()}
                                 </Text>
                                 <Heading fontSize="lg">{post.title}</Heading>
-                                <Text mt={4}>{post.bodySnippet}...</Text>
+                                {isServer() ? (
+                                    <Text mt={4}>{post.bodySnippet}</Text>
+                                ) : (
+                                    <ReactQuill
+                                        className="post-view__text"
+                                        theme="bubble"
+                                        value={post.bodySnippet}
+                                        readOnly
+                                    />
+                                )}
                             </Box>
                         );
                     })}

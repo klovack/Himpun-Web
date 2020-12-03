@@ -1,4 +1,5 @@
 import { ColorModeProvider, CSSReset, ThemeProvider } from '@chakra-ui/core';
+import 'react-quill/dist/quill.bubble.css';
 
 import theme from '../theme';
 import '../styles/styles.scss';
