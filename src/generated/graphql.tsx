@@ -56,12 +56,16 @@ export type Post = {
   title: Scalars['String'];
   body?: Maybe<Scalars['String']>;
   isPublished?: Maybe<Scalars['Boolean']>;
+  reads?: Maybe<Scalars['Int']>;
   featuredImage?: Maybe<Media>;
   author: User;
   votes?: Maybe<Array<User>>;
   likes?: Maybe<Array<User>>;
   dislikes?: Maybe<Array<User>>;
   bodySnippet: Scalars['String'];
+  votesCount: Scalars['Int'];
+  likesCount: Scalars['Int'];
+  dislikesCount: Scalars['Int'];
 };
 
 export type Media = {
@@ -117,6 +121,8 @@ export type Mutation = {
   createPost?: Maybe<Post>;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
+  readPost: Scalars['Boolean'];
+  vote: Scalars['Boolean'];
   changePassword: UserResponse;
   forgotPassword: Scalars['Boolean'];
   register: UserResponse;
@@ -138,6 +144,17 @@ export type MutationUpdatePostArgs = {
 
 export type MutationDeletePostArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationReadPostArgs = {
+  postId: Scalars['String'];
+};
+
+
+export type MutationVoteArgs = {
+  isUpvote?: Maybe<Scalars['Boolean']>;
+  postId: Scalars['String'];
 };
 
 
@@ -208,7 +225,7 @@ export type RegularErrorFragment = (
 
 export type BasicPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'body' | 'isPublished'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'body' | 'isPublished' | 'reads'>
   & { featuredImage?: Maybe<(
     { __typename?: 'Media' }
     & Pick<Media, 'url'>
@@ -229,23 +246,14 @@ export type BasicPostFragment = (
 
 export type SnippetPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'bodySnippet' | 'isPublished'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'bodySnippet' | 'isPublished' | 'votesCount' | 'likesCount' | 'dislikesCount' | 'reads'>
   & { featuredImage?: Maybe<(
     { __typename?: 'Media' }
     & Pick<Media, 'url'>
   )>, author: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
-  ), votes?: Maybe<Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'username'>
-  )>>, likes?: Maybe<Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'username'>
-  )>>, dislikes?: Maybe<Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'username'>
-  )>> }
+  ) }
 );
 
 export type BasicUserFragment = (
@@ -446,6 +454,7 @@ export const BasicPostFragmentDoc = gql`
   dislikes {
     username
   }
+  reads
 }
     `;
 export const SnippetPostFragmentDoc = gql`
@@ -463,15 +472,10 @@ export const SnippetPostFragmentDoc = gql`
     id
     username
   }
-  votes {
-    username
-  }
-  likes {
-    username
-  }
-  dislikes {
-    username
-  }
+  votesCount
+  likesCount
+  dislikesCount
+  reads
 }
     `;
 export const BasicUserFragmentDoc = gql`

@@ -21,6 +21,7 @@ fragment BasicPost on Post {
   dislikes {
     username
   }
+  reads
 }
 
 fragment SnippetPost on Post {
@@ -37,13 +38,8 @@ fragment SnippetPost on Post {
     id
     username
   }
-  votes {
-    username
-  }
-  likes {
-    username
-  }
-  dislikes {
-    username
-  }
+  votesCount
+  likesCount
+  dislikesCount
+  reads
 }

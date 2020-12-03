@@ -68,6 +68,13 @@ const Index = () => {
                                         readOnly
                                     />
                                 )}
+
+                                <Text>
+                                    Reads: {post.reads ? post.reads : 0}&nbsp;
+                                    Votes: {post.votesCount} &nbsp;
+                                    Likes: {post.likesCount} &nbsp;
+                                    Dislikes: {post.dislikesCount}
+                                </Text>
                             </Box>
                         );
                     })}
